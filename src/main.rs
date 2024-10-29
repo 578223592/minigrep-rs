@@ -1,24 +1,54 @@
-use std::{env, fmt, fs};
+use std::{env, fs};
+
+// run : cargo run query src/file.txt
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     dbg!(&args);
-    let (query,file_path) = parse_config(&args);
-    let file_content =fs::read_to_string(file_path).expect("fs read error");
-    println!("{file_content}")
+    let config_result = Config::build(args.into_iter());
+    let config = config_result.unwrap_or_else(|err| {
+        println!("Problem parsing arguments: {err}");
+        std::process::exit(1);
+    });
+
+    if let Err(err) = run(&config){  //if let 去匹配是否存在错误即可
+        println!("Problem run fn: {err}");
+        std::process::exit(1);
+    }
+
+   
 }
 
-fn parse_config(configs: &Vec<String> ) ->(&str,&str){
-    let query = &configs[1];
-    let filename = &configs[2];
-    println!("Searching for {} in {}", query, filename);
-    return (query,filename)
+fn run(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
+    let file_content = fs::read_to_string(config.file_path.clone())?;
+    println!("Searching for {}", config.query);
+    println!("{file_content}");
+
+    return Ok(());
 }
 
-// run : cargo run query src/file.txt
+struct Config {
+    query: String,
+    file_path: String,
+}
+
+impl Config {
+    fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file path"),
+        };
+        return Ok(Config { query, file_path });
+    }
+}
 
 /*
 2024-10-29 00:04:53进度：
 看到了：https://course.rs/basic-practice/refactoring.html中的
-修改后，类似 String::new 的调用，我们可以通过 Config::new 来创建一个实例，看起来代码是不是更有那味儿了 ：）
+分离逻辑代码到库包中
 */
