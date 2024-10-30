@@ -1,6 +1,9 @@
-use std::{env, fs};
+use std::env;
 
-// run : cargo run query src/file.txt
+use minigrep_rs::{run, Config};
+
+// run : cargo run then src/file.txt true
+// 参数说明：query内容 文件路径 是否忽略大小写（可选，默认false）
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -19,36 +22,10 @@ fn main() {
    
 }
 
-fn run(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
-    let file_content = fs::read_to_string(config.file_path.clone())?;
-    println!("Searching for {}", config.query);
-    println!("{file_content}");
 
-    return Ok(());
-}
-
-struct Config {
-    query: String,
-    file_path: String,
-}
-
-impl Config {
-    fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
-        args.next();
-        let query = match args.next() {
-            Some(arg) => arg,
-            None => return Err("Didn't get a query string"),
-        };
-        let file_path = match args.next() {
-            Some(arg) => arg,
-            None => return Err("Didn't get a file path"),
-        };
-        return Ok(Config { query, file_path });
-    }
-}
 
 /*
-2024-10-29 00:04:53进度：
-看到了：https://course.rs/basic-practice/refactoring.html中的
-分离逻辑代码到库包中
+2024年10月31日00:25:59进度：
+看到了：https://course.rs/basic-practice/stderr.html
+还没开始看
 */
