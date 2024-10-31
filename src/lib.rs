@@ -53,20 +53,25 @@ pub fn run(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
 
 pub fn case_sensitive_search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     // let mut res = Vec::new();
-    let res : Vec<&str>= contents.lines()
-        .filter(|line| line.contains(query)).collect();
+    let res: Vec<&str> = contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect();
 
     return res;
 }
 
 pub fn case_insensitive_search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let query = query.to_lowercase();
-    let res = contents.lines().filter(|line| line.to_lowercase().contains(&query)).collect();
+    let res = contents
+        .lines()
+        .filter(|line| line.to_lowercase().contains(&query))
+        .collect();
     return res;
 }
 
 // add codes for test
-//  cargo test --package minigrep_rs --lib -- tests --show-output
+// cargo test --package minigrep_rs --lib -- tests --show-output
 #[cfg(test)]
 mod tests {
     use super::*;
