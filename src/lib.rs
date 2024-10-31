@@ -41,7 +41,8 @@ pub fn run(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     );
     // println!("{file_content}");
     println!("search result: ");
-    let mut search_fun :for<'a> fn(query: &'a str, contents: &'a str) -> Vec<&'a str> = case_sensitive_search;
+    let mut search_fun: for<'a> fn(query: &'a str, contents: &'a str) -> Vec<&'a str> =
+        case_sensitive_search;
     if config.ignore_case {
         search_fun = case_insensitive_search;
     }
@@ -51,23 +52,16 @@ pub fn run(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 pub fn case_sensitive_search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut res = Vec::new();
-    for line in contents.lines() {
-        if line.contains(query) {
-            res.push(line);
-        }
-    }
+    // let mut res = Vec::new();
+    let res : Vec<&str>= contents.lines()
+        .filter(|line| line.contains(query)).collect();
+
     return res;
 }
 
 pub fn case_insensitive_search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let query = query.to_lowercase();
-    let mut res = Vec::new();
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            res.push(line);
-        }
-    }
+    let res = contents.lines().filter(|line| line.to_lowercase().contains(&query)).collect();
     return res;
 }
 
